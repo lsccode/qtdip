@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/devInfo.png</file>
+        <file>images/films.png</file>
+        <file>images/sysLog.png</file>
+        <file>images/timSet.png</file>
+        <file>images/usrMng.png</file>
+        <file>images/vdImg.png</file>
+        <file>images/webBro.png</file>
+        <file>images/appMain.png</file>
+        <file>images/devMan.png</file>
+        <file>images/event.png</file>
+        <file>images/usrCert.png</file>
+        <file>images/webcam.png</file>
+        <file>qss/app.qss</file>
+        <file>images/devCfg.png</file>
+        <file>images/netSet.png</file>
+        <file>images/analy.png</file>
+        <file>images/intra.png</file>
+        <file>images/pass.png</file>
+        <file>images/drag.png</file>
+    </qresource>
+</RCC>
