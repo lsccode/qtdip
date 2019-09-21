@@ -15,13 +15,12 @@ public:
 
 private:
     QImage m_image;
-    int m_show;
 signals:
 
 public slots:
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    void virtual paintEvent(QPaintEvent *event);
 };
 
 #endif // PLAYWIDGET_H

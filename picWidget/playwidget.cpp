@@ -3,14 +3,13 @@
 
 PlayWidget::PlayWidget(QWidget *parent) : QWidget(parent)
 {
-    m_show = 0;
+
 }
 
 void PlayWidget::showImage(QImage image)
 {
-    m_show = 1;
     m_image = image;
-
+    update();
 }
 
 void PlayWidget::paintEvent(QPaintEvent *event)
@@ -26,7 +25,7 @@ void PlayWidget::paintEvent(QPaintEvent *event)
     if(nullptr == event)
         return;
 
-    if(m_show == 0)
+    if(m_image.width() <= 0 || m_image.height() <= 0)
         return ;
 
     if(m_image.width()/m_image.height() >= width()/height())
