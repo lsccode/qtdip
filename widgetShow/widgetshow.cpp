@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QSplitter>
 
 //  参考 https://blog.csdn.net/cqltbe131421/article/details/73322620
 
@@ -14,13 +15,36 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
     m_pWgtLeftShowBf = new PlayWidget;
     m_pWgtRightShowAf = new PlayWidget;
 
-    QHBoxLayout *layoutTop = new QHBoxLayout;;
+#if 0
+    QHBoxLayout *layoutTop = new QHBoxLayout;
     layoutTop->addWidget(m_pWgtLeftShowBf);
     layoutTop->addSpacing(5);
     layoutTop->addWidget(m_pWgtRightShowAf);
 
-    createAction();
+#endif
 
+#if 0
+    QGridLayout *layoutTop = new QGridLayout;
+
+    layoutTop->addWidget(m_pWgtLeftShowBf, 0, 0);
+    layoutTop->addWidget(m_pWgtRightShowAf, 0, 1);
+#endif
+
+    QHBoxLayout *layoutTop = new QHBoxLayout;
+    QSplitter *splitter = new QSplitter(Qt::Horizontal);
+
+    splitter->addWidget(m_pWgtLeftShowBf);
+    splitter->addWidget(m_pWgtRightShowAf);
+    splitter->setHandleWidth(2);
+
+//    splitter->setFrameShadow(QFrame::Raised);
+//    splitter->setFrameShape(QFrame::Box);
+//    splitter->setLineWidth(5);
+//    splitter->setStyleSheet("QSplitter::handle{background-color: blue}");
+
+    layoutTop->addWidget(splitter);
+
+    createAction();
     setAcceptDrops(true);
     setLayout(layoutTop);
 }

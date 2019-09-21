@@ -246,7 +246,8 @@ QMenuBar::item:pressed {
 
 PlayWidget {
     background-color: #222222; /* 333333 */
-    border:1px solid gray;
+    color: white;
+    border: 2px solid #FF3333;
 }
 
 /* === QScrollBar:vertical === */
@@ -420,14 +421,3 @@ QTreeView::branch:open:has-children:!has-siblings {
 QFrame#infoLabel {
     border: 1px inset #333333;
 }
-
-QFrame {
-    border:1px solid gray;
-}
-
-QSplitter::handle {
-    background-color: gray
-}
-
-
-
