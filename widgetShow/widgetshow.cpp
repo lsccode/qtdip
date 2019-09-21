@@ -3,6 +3,8 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QDropEvent>
+#include <QMimeData>
 
 //  参考 https://blog.csdn.net/cqltbe131421/article/details/73322620
 
@@ -12,21 +14,14 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
     m_pWgtLeftShowBf = new PlayWidget;
     m_pWgtRightShowAf = new PlayWidget;
 
-#if 0
-    QGridLayout *layoutTop = new QGridLayout;;
-    layoutTop->addWidget(m_pWgtLeftShowBf,0,0);
-    layoutTop->addWidget(m_pWgtRightShowAf,0,1);
-    layoutTop->setHorizontalSpacing(3);
-#else
     QHBoxLayout *layoutTop = new QHBoxLayout;;
     layoutTop->addWidget(m_pWgtLeftShowBf);
     layoutTop->addSpacing(5);
     layoutTop->addWidget(m_pWgtRightShowAf);
 
-#endif
-
     createAction();
 
+    setAcceptDrops(true);
     setLayout(layoutTop);
 }
 
@@ -57,7 +52,26 @@ void widgetShow::createAction()
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setFocusPolicy(Qt::StrongFocus);
+    setAcceptDrops(true);
+}
 
+void widgetShow::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->setDropAction(Qt::MoveAction);
+    event->accept();
+}
+
+void widgetShow::dropEvent(QDropEvent *event)
+{
+    QString temp = event->mimeData()->text();
+
+    if(temp.contains("///"))
+    {
+        int n = temp.indexOf("///");
+        m_imagePath = temp.mid(n + 3);
+    }
+
+    emit openImageFile(m_imagePath);
 }
 
 void widgetShow::onTaskBoxContextMenuEvent()

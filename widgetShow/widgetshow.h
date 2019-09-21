@@ -19,14 +19,19 @@ public:
     void imageProcess(QImage image);
     void createAction();
 
-public:
-    PlayWidget *m_pWgtLeftShowBf;
-    PlayWidget *m_pWgtRightShowAf;
-    QMenu *m_pMenu;
+protected:
+    // 以下两个动作支持拖动，必须同时存在
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private:
+    PlayWidget *m_pWgtLeftShowBf;
+    PlayWidget *m_pWgtRightShowAf;
     QImage m_image;
+    QString m_imagePath;
+
 signals:
+    void openImageFile(QString str);
 
 public slots:
     void onTaskBoxContextMenuEvent();

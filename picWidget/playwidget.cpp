@@ -48,3 +48,4 @@ void PlayWidget::paintEvent(QPaintEvent *event)
 
     return;
 }
+

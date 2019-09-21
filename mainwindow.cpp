@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowIcon(QIcon(":/images/appMain.png"));
     setWindowTitle(tr("DIP"));
 
+    connect(m_WgtShow, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+
     createActions();
 }
 
