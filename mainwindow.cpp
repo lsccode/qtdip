@@ -14,18 +14,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     mainTabwidget = new QTabWidget;
-    playWidget    = new PlayWidget;
-    playWidget1   = new PlayWidget;
+
+    m_WgtShow     = new widgetShow;
 
     mainTabwidget->setIconSize(QSize(24, 24));
     mainTabwidget->setTabShape(QTabWidget::Triangular);
-    mainTabwidget->addTab(playWidget,QIcon(":/images/films.png"),"实时预览");
-    mainTabwidget->addTab(playWidget1,QIcon(":/images/devCfg.png"),"设备配置");
+    mainTabwidget->addTab(m_WgtShow,QIcon(":/images/films.png"),"预览");
 
     setMinimumSize(900,480);
     setCentralWidget(mainTabwidget);
     setWindowIcon(QIcon(":/images/appMain.png"));
-    setWindowTitle(tr("Smart Nvt"));
+    setWindowTitle(tr("DIP"));
 
     createActions();
 }
@@ -52,7 +51,7 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
         mimeTypeFilters.append(mimeTypeName);
     mimeTypeFilters.sort();
     dialog.setMimeTypeFilters(mimeTypeFilters);
-    dialog.selectMimeTypeFilter("image/jpeg");
+    dialog.selectMimeTypeFilter("image/jpeg image/bmp");
     if (acceptMode == QFileDialog::AcceptSave)
         dialog.setDefaultSuffix("jpg");
 }
@@ -69,7 +68,7 @@ bool MainWindow::loadFile(const QString &fileName)
         return false;
     }
 
-    playWidget->showImage(image);
+    m_WgtShow->showImage(image);
 
     setWindowFilePath(fileName);
 

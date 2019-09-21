@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QTabWidget>
 #include <QImage>
-#include "picWidget/playwidget.h"
+#include "widgetShow/widgetshow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -23,8 +23,8 @@ private slots:
     void saveAs();
 private:
     QTabWidget *mainTabwidget;
-    PlayWidget *playWidget;
-    PlayWidget *playWidget1;
+
+    widgetShow *m_WgtShow;
 
     QImage image;
 

@@ -245,10 +245,9 @@ QMenuBar::item:pressed {
 }
 
 PlayWidget {
-    background-color: #444444;
+    background-color: black;
     color: white;
 }
-
 /* === QScrollBar:vertical === */
 QScrollBar:vertical {
     background: #111111;
@@ -287,7 +286,6 @@ QScrollBar:up-arrow:vertical, QScrollBar:down-arrow:vertical {
 }
 
 /* === QScrollBar:horizontal === */
-
 QScrollBar:horizontal {
     background: #111111;
     height: 16px;
@@ -325,7 +323,6 @@ QScrollBar:left-arrow:horizontal, QScrollBar:right-arrow:horizontal {
 }
 
 /* =================== */
-
 QLineEdit, QListView, QTreeView, QTableView, QAbstractSpinBox {
     background-color: black;
     color: #BBBBBB;
@@ -339,7 +336,6 @@ QAbstractScrollArea, QLineEdit, QTextEdit, QAbstractSpinBox, QComboBox {
 }
 
 /* === QHeaderView === */
-
 QHeaderView::section {
     background: #222222;
     border: 0;
@@ -348,7 +344,6 @@ QHeaderView::section {
 }
 
 /* === QListView === */
-
 QListView::item:hover {
     background: #333333;
 }
@@ -369,7 +364,6 @@ QTableView::item:hover {
 }
 
 /* === QTreeView === */
-
 QTreeView::item {
     background: black;
 }
@@ -416,14 +410,12 @@ QTreeView::branch:open:has-children:!has-siblings {
 }
 
 /* === Customizations === */
-
 QFrame#infoLabel {
     border: 1px inset #333333;
 }
-/* 2. */
+2.
 
-/* . */
-QWidget {
+.QWidget {
    background-color: beige;
 }
 
