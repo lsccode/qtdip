@@ -40,6 +40,7 @@ MainWindow::~MainWindow()
 
 static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMode acceptMode)
 {
+#if 0
     static bool firstDialog = true;
 
     if (firstDialog) {
@@ -58,6 +59,19 @@ static void initializeImageFileDialog(QFileDialog &dialog, QFileDialog::AcceptMo
     dialog.selectMimeTypeFilter("image/jpeg image/bmp");
     if (acceptMode == QFileDialog::AcceptSave)
         dialog.setDefaultSuffix("jpg");
+
+#else
+    static bool firstDialog = true;
+
+    if (firstDialog) {
+        firstDialog = false;
+        const QStringList picturesLocations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+        dialog.setDirectory(picturesLocations.isEmpty() ? QDir::currentPath() : picturesLocations.last());
+    }
+
+    if (acceptMode == QFileDialog::AcceptSave)
+        dialog.setDefaultSuffix("jpg");
+#endif
 }
 
 bool MainWindow::loadFile(const QString &fileName)
