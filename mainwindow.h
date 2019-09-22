@@ -5,6 +5,7 @@
 #include <QTabWidget>
 #include <QImage>
 #include "widgetShow/widgetshow.h"
+#include "widgetGrayTransform/widgetgraytransform.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +25,8 @@ private slots:
 private:
     QTabWidget *mainTabwidget;
 
-    widgetShow *m_WgtShow;
+    widgetShow *m_pWgtShow;
+    widgetGrayTransform *m_pWgtGrayTrans;
     PlayWidget *m_wgtPlay;
 
     QImage image;

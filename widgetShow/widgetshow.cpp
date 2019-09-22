@@ -45,6 +45,7 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
 
     layoutTop->addWidget(splitter);
 
+    // 清除layout附件的空白
     layoutTop->setMargin(0);
 
     createAction();
@@ -55,12 +56,24 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
 void widgetShow::showImage(QImage image)
 {
     m_image = image;
+    int siformat = m_image.format();
+    fprintf(stderr,"format is %d\n",siformat);
     m_pWgtLeftShowBf->showImage(m_image);
 }
 
-void widgetShow::imageProcess(QImage image)
+void widgetShow::imageProcess(QImage image, int i)
 {
-    m_pWgtRightShowAf->showImage(image);
+    switch (i)
+    {
+    case 1:
+         m_pWgtRightShowAf->showImage(image);
+        break;
+//    case 2:
+//        QMessageBox::about(this, "tip", pEven->text());
+//        break;
+    default:
+        break;
+    }
 
 }
 
@@ -80,6 +93,17 @@ void widgetShow::createAction()
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setFocusPolicy(Qt::StrongFocus);
     setAcceptDrops(true);
+}
+
+void widgetShow::clearAction()
+{
+    QList<QAction *> listActions = this->actions();
+
+    while (!listActions.isEmpty()){
+        QAction * curAct = listActions.front();
+        removeAction(curAct);
+        listActions.pop_front();
+    }
 }
 
 void widgetShow::dragEnterEvent(QDragEnterEvent *event)
@@ -108,16 +132,6 @@ void widgetShow::onTaskBoxContextMenuEvent()
     //获取发送信息类型 1:显示 2:测试
     int iType = pEven->data().toInt();
 
-    switch (iType)
-    {
-    case 1:
-        imageProcess(m_image);
-        break;
-    case 2:
-        QMessageBox::about(this, "tip", pEven->text());
-        break;
-    default:
-        break;
-}
+    imageProcess(m_image, iType);
 }
 

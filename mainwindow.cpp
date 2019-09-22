@@ -15,12 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     mainTabwidget = new QTabWidget;
 
-    m_WgtShow     = new widgetShow;
-    m_wgtPlay     = new PlayWidget;
+    m_pWgtShow      = new widgetShow;
+    m_pWgtGrayTrans = new widgetGrayTransform;
+    m_wgtPlay       = new PlayWidget;
 
     mainTabwidget->setIconSize(QSize(24, 24));
     mainTabwidget->setTabShape(QTabWidget::Triangular);
-    mainTabwidget->addTab(m_WgtShow,QIcon(":/images/films.png"),"预览");
+    mainTabwidget->addTab(m_pWgtShow,QIcon(":/images/films.png"),"预览");
+    mainTabwidget->addTab(m_pWgtGrayTrans,QIcon(":/images/films.png"),"灰度变换");
     mainTabwidget->addTab(m_wgtPlay,QIcon(":/images/films.png"),"paly");
 
     setMinimumSize(900,480);
@@ -28,7 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowIcon(QIcon(":/images/appMain.png"));
     setWindowTitle(tr("DIP"));
 
-    connect(m_WgtShow, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+    connect(m_pWgtShow, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+    connect(m_pWgtGrayTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
 
     createActions();
 }
@@ -86,7 +89,8 @@ bool MainWindow::loadFile(const QString &fileName)
         return false;
     }
 
-    m_WgtShow->showImage(image);
+    m_pWgtShow->showImage(image);
+    m_pWgtGrayTrans->showImage(image);
     m_wgtPlay->showImage(image);
 
     setWindowFilePath(fileName);
