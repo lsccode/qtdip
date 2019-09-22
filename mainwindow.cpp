@@ -81,13 +81,15 @@ bool MainWindow::loadFile(const QString &fileName)
 {
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
-    image = reader.read();
-    if (image.isNull()) {
+    QImage temp = reader.read();
+    if (temp.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("Cannot load %1: %2")
                                  .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
         return false;
     }
+
+    image = temp.convertToFormat(QImage::Format_RGB32);
 
     m_pWgtShow->showImage(image);
     m_pWgtGrayTrans->showImage(image);
