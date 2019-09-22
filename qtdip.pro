@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     picWidget/playwidget.cpp \
-    widgetShow/widgetshow.cpp
+    widgetShow/widgetshow.cpp \
+    widgetGrayTransform/widgetgraytransform.cpp
 
 HEADERS += \
         mainwindow.h \
     picWidget/playwidget.h \
-    widgetShow/widgetshow.h
+    widgetShow/widgetshow.h \
+    widgetGrayTransform/widgetgraytransform.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
