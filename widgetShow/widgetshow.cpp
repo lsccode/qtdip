@@ -42,7 +42,10 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
 //    splitter->setLineWidth(5);
 //    splitter->setStyleSheet("QSplitter::handle{background-color: blue}");
 
+
     layoutTop->addWidget(splitter);
+
+    layoutTop->setMargin(0);
 
     createAction();
     setAcceptDrops(true);

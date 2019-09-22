@@ -25,6 +25,7 @@ private:
     QTabWidget *mainTabwidget;
 
     widgetShow *m_WgtShow;
+    PlayWidget *m_wgtPlay;
 
     QImage image;
 

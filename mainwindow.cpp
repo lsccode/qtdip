@@ -16,10 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
     mainTabwidget = new QTabWidget;
 
     m_WgtShow     = new widgetShow;
+    m_wgtPlay     = new PlayWidget;
 
     mainTabwidget->setIconSize(QSize(24, 24));
     mainTabwidget->setTabShape(QTabWidget::Triangular);
     mainTabwidget->addTab(m_WgtShow,QIcon(":/images/films.png"),"预览");
+    mainTabwidget->addTab(m_wgtPlay,QIcon(":/images/films.png"),"paly");
 
     setMinimumSize(900,480);
     setCentralWidget(mainTabwidget);
@@ -71,6 +73,7 @@ bool MainWindow::loadFile(const QString &fileName)
     }
 
     m_WgtShow->showImage(image);
+    m_wgtPlay->showImage(image);
 
     setWindowFilePath(fileName);
 
