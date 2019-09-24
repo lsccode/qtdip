@@ -29,7 +29,9 @@ private:
     widgetGrayTransform *m_pWgtGrayTrans;
     PlayWidget *m_wgtPlay;
 
-    QImage image;
+    QImage m_imageFile;
+    QImage m_imageRgb;
+    QImage m_imageGray;
 
     QAction *openAsAct;
     QAction *saveAsAct;

@@ -81,24 +81,30 @@ bool MainWindow::loadFile(const QString &fileName)
 {
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
-    QImage temp = reader.read();
-    if (temp.isNull()) {
+    m_imageFile = reader.read();
+    if (m_imageFile.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("Cannot load %1: %2")
                                  .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
         return false;
     }
 
-    image = temp.convertToFormat(QImage::Format_RGB32);
+    // 先转换为灰度图，
+    m_imageGray = m_imageFile.convertToFormat(QImage::Format_Grayscale8);
 
-    m_pWgtShow->showImage(image);
-    m_pWgtGrayTrans->showImage(image);
-    m_wgtPlay->showImage(image);
+    //再转换为8位位图
+    m_imageGray = m_imageGray.convertToFormat(QImage::Format_Indexed8);
+
+    m_imageRgb  = m_imageFile.convertToFormat(QImage::Format_RGB32);
+
+    m_pWgtShow->showImage(m_imageFile);
+    m_pWgtGrayTrans->showImage(m_imageGray);
+    m_wgtPlay->showImage(m_imageRgb);
 
     setWindowFilePath(fileName);
 
-    const QString message = tr("Opened \"%1\", %2x%3, Depth: %4")
-        .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
+    const QString message = tr("Opened \"%1\", %2x%3, Depth: %4, format: %5")
+        .arg(QDir::toNativeSeparators(fileName)).arg(m_imageFile.width()).arg(m_imageFile.height()).arg(m_imageFile.depth()).arg(m_imageFile.format());
     statusBar()->showMessage(message);
     return true;
 }
