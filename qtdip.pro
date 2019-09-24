@@ -25,17 +25,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
+        main/main.cpp \
+        main/mainwindow.cpp \
     picWidget/playwidget.cpp \
     widgetShow/widgetshow.cpp \
     widgetGrayTransform/widgetgraytransform.cpp
 
 HEADERS += \
-        mainwindow.h \
+        main/mainwindow.h \
     picWidget/playwidget.h \
     widgetShow/widgetshow.h \
     widgetGrayTransform/widgetgraytransform.h
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
