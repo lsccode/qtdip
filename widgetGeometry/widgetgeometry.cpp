@@ -1,6 +1,7 @@
 #include "widgetgeometry.h"
 #include "dialogMove.h"
 #include "dialogZoom.h"
+#include "dialogRotate.h"
 
 enum E_ACTION
 {
@@ -63,7 +64,7 @@ void widgetGeometryTransform::createAction()
     createOneAction(tr("垂直镜像"),E_VER);
     createOneAction(tr("图像转置"),E_TRANS);
     createOneAction(tr("图像缩放"),E_ZOOM);
-    createOneAction(tr("图像旋转"),E_ROTOTE);
+    createOneAction(tr("图像旋转 *"),E_ROTOTE);
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setFocusPolicy(Qt::StrongFocus);
@@ -312,11 +313,29 @@ void widgetGeometryTransform::imageRotate(QImage *psrcImage, QImage **ppdstImage
     double       DstX3,DstY3,DstX4,DstY4;
     double       cosa,sina;
     double       num1,num2;
-    double RotateAngle;
+    double       dbRotate;
+    static double RotateAngle = 180.0;
+
+    dialogRotate dlg(RotateAngle);
+    dlg.setWindowTitle(tr("图像旋转"));
+    dlg.exec();
+
+    if(!dlg.isPushOk())
+    {
+        return ;
+    }
+
+    if(dlg.dbRotate < 1e-6)
+    {
+        return ;
+    }
+
+    RotateAngle = dlg.dbRotate;
+
     //角度到弧度的转化
-    RotateAngle=static_cast<double>(RADIAN(-90.0));
-    cosa=static_cast<double>(cos(static_cast<double>(RotateAngle)));
-    sina=static_cast<double>(sin(static_cast<double>(RotateAngle)));
+    dbRotate=static_cast<double>(RADIAN(RotateAngle));
+    cosa=static_cast<double>(cos(static_cast<double>(dbRotate)));
+    sina=static_cast<double>(sin(static_cast<double>(dbRotate)));
     //原图的宽度和高度
 
     int siSrcWidth  = psrcImage->width();
