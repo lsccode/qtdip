@@ -23,7 +23,8 @@ private:
     void imageTrans(QImage *psrcImage, QImage **ppdstImage);
     // 图像放大
     void imageZoomIn(QImage *psrcImage, QImage **ppdstImage);
-
+    // 图像旋转
+    void imageRotate(QImage *psrcImage, QImage **ppdstImage);
 };
 
 #endif // WIDGETGEOMETRY_H

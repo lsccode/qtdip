@@ -31,7 +31,8 @@ SOURCES += \
     widgetShow/widgetshow.cpp \
     widgetGrayTransform/widgetgraytransform.cpp \
     widgetGeometry/widgetgeometry.cpp \
-    widgetGeometry/dialogMove.cpp
+    widgetGeometry/dialogMove.cpp \
+    widgetGeometry/dialogZoom.cpp
 
 HEADERS += \
         main/mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
     widgetShow/widgetshow.h \
     widgetGrayTransform/widgetgraytransform.h \
     widgetGeometry/widgetgeometry.h \
-    widgetGeometry/dialogMove.h
+    widgetGeometry/dialogMove.h \
+    widgetGeometry/dialogZoom.h
 
 
 # Default rules for deployment.
