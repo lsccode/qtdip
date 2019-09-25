@@ -25,7 +25,6 @@ private:
     // 图像放大
     void imageZoomIn(QImage *psrcImage, QImage **ppdstImage);
 
-
 };
 
 #endif // WIDGETGEOMETRY_H

@@ -45,7 +45,7 @@ widgetShow::widgetShow(QWidget *parent) : QWidget(parent)
 
     layoutTop->addWidget(splitter);
 
-    // 清除layout附件的空白
+    // 清除layout边框的空白
     layoutTop->setMargin(0);
 
     createAction();

@@ -1,4 +1,5 @@
 #include "widgetgeometry.h"
+#include "dialogMove.h"
 
 enum E_ACTION
 {
@@ -88,12 +89,24 @@ void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage **ppdstImage)
         pdstImage->fill(QColor(0,0,0,0));
     }
 
+    dialogMove dlg;
+    dlg.setWindowTitle(tr("图像平移"));
+    dlg.exec();
+
+    if(!dlg.isPushOk())
+    {
+        return ;
+    }
+
+    offset_x = dlg.siXoffset;
+    offset_y = dlg.siyoffset;
+
     // 对于源图像有得像素，再使用源图像的像素
     for(int i = 0; i < siHeight; ++i){
         for(int j = 0; j < siWidth; ++j){
             int siIndex = 0;
-            int sij = j + offset_y;
-            int sii = i + offset_x;
+            int sij = j + offset_x;
+            int sii = i + offset_y;
             if(siFormat == QImage::Format_Indexed8){
 
                 siIndex = psrcImage->pixelIndex(j,i);
@@ -231,8 +244,8 @@ void widgetGeometryTransform::imageTrans(QImage *psrcImage, QImage **ppdstImage)
     *ppdstImage = pdstImage;
 }
 
-static float dbHor = 2.0;
-static float dbVer = 1.0;
+static float dbHor = 1;
+static float dbVer = 0.5;
 
 void widgetGeometryTransform::imageZoomIn(QImage *psrcImage, QImage **ppdstImage)
 {
@@ -254,7 +267,7 @@ void widgetGeometryTransform::imageZoomIn(QImage *psrcImage, QImage **ppdstImage
     for(int y = 0; y < siHeight; ++y){
         for(int x = 0; x < siWidth; ++x){
             int siSrcX = static_cast<int>(x/dbHor);
-            int siSrcY = static_cast<int>(y/dbHor);
+            int siSrcY = static_cast<int>(y/dbVer);
 
             if(siFormat == QImage::Format_Indexed8){
                 int siIndex = psrcImage->pixelIndex(siSrcX,siSrcY);
