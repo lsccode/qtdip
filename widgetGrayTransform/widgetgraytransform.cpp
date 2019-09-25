@@ -76,6 +76,9 @@ void widgetGrayTransform::createAction()
     // 清除父类的action 动作，否则会重叠
     widgetShow::clearAction();
 
+    //增加快速加载图片右键菜单
+    createDefaultAction();
+
     pActionHorMir->setData(1);
     pActionVerMir->setData(2);
 

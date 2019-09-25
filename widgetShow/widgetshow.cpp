@@ -95,6 +95,15 @@ void widgetShow::createAction()
     setAcceptDrops(true);
 }
 
+void widgetShow::createOneAction(QString str, int action)
+{
+    QAction *pAction = new QAction(str, this);
+
+    pAction->setData(action);
+    addAction(pAction);
+    connect(pAction, SIGNAL(triggered()), this, SLOT(onTaskBoxContextMenuEvent()));
+}
+
 void widgetShow::clearAction()
 {
     QList<QAction *> listActions = this->actions();
@@ -104,6 +113,20 @@ void widgetShow::clearAction()
         removeAction(curAct);
         listActions.pop_front();
     }
+}
+
+void widgetShow::loadDefaultImg()
+{
+    m_imagePath = tr("C:\\Users\\sichenglin\\Pictures\\lenargb.jpg");
+    emit openImageFile(m_imagePath);
+}
+
+void widgetShow::createDefaultAction()
+{
+    QAction *pAction = new QAction("图片加载", this);
+
+    addAction(pAction);
+    connect(pAction, SIGNAL(triggered()), this, SLOT(loadDefaultImg()));
 }
 
 void widgetShow::dragEnterEvent(QDragEnterEvent *event)

@@ -12,7 +12,10 @@ class dialogMove: public QDialog
     Q_OBJECT
 public:
     dialogMove(QWidget  *parent = nullptr);
+    dialogMove(int x, int y ,QWidget  *parent = nullptr);
     ~dialogMove();
+
+    void initWidget();
 
     int isPushOk();
 

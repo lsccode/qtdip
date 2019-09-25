@@ -18,7 +18,9 @@ public:
     void showImage(QImage image);
     virtual void imageProcess(QImage image, int i);
     virtual void createAction();
+    virtual void createOneAction(QString str, int action);
     virtual void clearAction();
+    virtual void createDefaultAction();
 
 protected:
     // 以下两个动作支持拖动，必须同时存在
@@ -36,6 +38,7 @@ signals:
 
 public slots:
     void onTaskBoxContextMenuEvent();
+    virtual void loadDefaultImg();
 };
 
 #endif // WIDGETSHOW_H

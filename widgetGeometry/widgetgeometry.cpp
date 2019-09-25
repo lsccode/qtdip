@@ -50,6 +50,9 @@ void widgetGeometryTransform::createAction()
     // 清除父类的action 动作，否则会重叠
     widgetShow::clearAction();
 
+    //增加快速加载图片右键菜单
+    createDefaultAction();
+
     createOneAction(tr("图像平移"),E_MOVE);
     createOneAction(tr("水平镜像"),E_HOR);
     createOneAction(tr("垂直镜像"),E_VER);
@@ -61,19 +64,11 @@ void widgetGeometryTransform::createAction()
     setAcceptDrops(true);
 }
 
-void widgetGeometryTransform::createOneAction(QString str, int action)
-{
-    QAction *pAction = new QAction(str, this);
-
-    pAction->setData(action);
-    addAction(pAction);
-    connect(pAction, SIGNAL(triggered()), this, SLOT(onTaskBoxContextMenuEvent()));
-}
-
-static int offset_x = 50;
-static int offset_y = 50;
 void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage **ppdstImage)
 {
+    static int offset_x = 0;
+    static int offset_y = 0;
+
     int siWidth  = psrcImage->width();
     int siHeight = psrcImage->height();
     QImage::Format siFormat = psrcImage->format();
@@ -89,7 +84,7 @@ void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage **ppdstImage)
         pdstImage->fill(QColor(0,0,0,0));
     }
 
-    dialogMove dlg;
+    dialogMove dlg(offset_x, offset_y);
     dlg.setWindowTitle(tr("图像平移"));
     dlg.exec();
 

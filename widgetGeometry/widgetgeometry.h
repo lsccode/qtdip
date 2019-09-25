@@ -12,7 +12,6 @@ public:
 public:
     virtual void imageProcess(QImage image,  int action);
     virtual void createAction();
-    virtual void createOneAction(QString str, int action);
 private:
     // 图像平移
     void imageMove(QImage *psrcImage, QImage **ppdstImage);
