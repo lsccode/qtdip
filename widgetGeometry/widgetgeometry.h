@@ -14,9 +14,16 @@ public:
     virtual void createAction();
     virtual void createOneAction(QString str, int action);
 private:
-    void imageMove(QImage *psrcImage, QImage *pdstImage);
-    void imageHor(QImage *psrcImage, QImage *pdstImage);
-    void imageVer(QImage *psrcImage, QImage *pdstImage);
+    // 图像平移
+    void imageMove(QImage *psrcImage, QImage **ppdstImage);
+    // 水平镜像
+    void imageHor(QImage *psrcImage, QImage **ppdstImage);
+    // 垂直镜像
+    void imageVer(QImage *psrcImage, QImage **ppdstImage);
+    // 图像转置
+    void imageTrans(QImage *psrcImage, QImage **ppdstImage);
+    // 图像放大
+    void imageZoomIn(QImage *psrcImage, QImage **ppdstImage);
 
 
 };

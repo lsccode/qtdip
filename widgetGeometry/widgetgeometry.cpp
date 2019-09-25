@@ -5,9 +5,9 @@ enum E_ACTION
     E_MOVE = 1,
     E_HOR,
     E_VER,
+    E_TRANS,
+    E_ZOOM
 };
-int offset_x = 50;
-int offset_y = 50;
 
 widgetGeometryTransform::widgetGeometryTransform()
 {
@@ -16,37 +16,30 @@ widgetGeometryTransform::widgetGeometryTransform()
 
 void widgetGeometryTransform::imageProcess(QImage image, int action)
 {
-    int siWidth = image.width();
-    int siHeight = image.height();
-    QImage::Format siFormat = image.format();
-
-    QImage *pImage = new QImage(siWidth, siHeight, siFormat);
-
-    // 以下用于填充颜色，测试用
- //   pImage->fill(QColor(255,0,0,0));
-
-    // 256色灰度索引图，需要手动设置索引
-    if(siFormat == QImage::Format_Indexed8)
-    {
-        pImage->setColorTable(image.colorTable());
-    }
+    QImage *pImage = nullptr;
 
     switch (action) {
     case E_HOR:
-        imageHor(&image,pImage);
+        imageHor(&image,&pImage);
         break;
     case E_VER:
-        imageVer(&image,pImage);
+        imageVer(&image,&pImage);
         break;
     case E_MOVE:
-        imageMove(&image,pImage);
+        imageMove(&image,&pImage);
         break;
-
+    case E_TRANS:
+        imageTrans(&image,&pImage);
+        break;
+    case E_ZOOM:
+        imageZoomIn(&image,&pImage);
+        break;
     default:
         break;
     }
 
-    m_pWgtRightShowAf->showImage(*pImage);
+    if(pImage != nullptr)
+        m_pWgtRightShowAf->showImage(*pImage);
 
     delete pImage;
 }
@@ -59,6 +52,8 @@ void widgetGeometryTransform::createAction()
     createOneAction(tr("图像平移"),E_MOVE);
     createOneAction(tr("水平镜像"),E_HOR);
     createOneAction(tr("垂直镜像"),E_VER);
+    createOneAction(tr("图像转置"),E_TRANS);
+    createOneAction(tr("图像缩放"),E_ZOOM);
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setFocusPolicy(Qt::StrongFocus);
@@ -74,15 +69,21 @@ void widgetGeometryTransform::createOneAction(QString str, int action)
     connect(pAction, SIGNAL(triggered()), this, SLOT(onTaskBoxContextMenuEvent()));
 }
 
-void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage *pdstImage)
+static int offset_x = 50;
+static int offset_y = 50;
+void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage **ppdstImage)
 {
-    int siWidth  = pdstImage->width();
-    int siHeight = pdstImage->height();
+    int siWidth  = psrcImage->width();
+    int siHeight = psrcImage->height();
     QImage::Format siFormat = psrcImage->format();
 
-    // 首先填充目的图像
-    if(siFormat == QImage::Format_Indexed8)
-        pdstImage->fill(0);
+    QImage *pdstImage = new QImage(siWidth, siHeight, siFormat);
+
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+         pdstImage->setColorTable(psrcImage->colorTable());
+         pdstImage->fill(0);
+    }
     else {
         pdstImage->fill(QColor(0,0,0,0));
     }
@@ -115,13 +116,28 @@ void widgetGeometryTransform::imageMove(QImage *psrcImage, QImage *pdstImage)
             }
         }
     }
+
+    *ppdstImage = pdstImage;
+
+    return;
 }
 
-void widgetGeometryTransform::imageHor(QImage *psrcImage, QImage *pdstImage)
+void widgetGeometryTransform::imageHor(QImage *psrcImage, QImage **ppdstImage)
 {
     int siWidth  = psrcImage->width();
     int siHeight = psrcImage->height();
     QImage::Format siFormat = psrcImage->format();
+
+    QImage *pdstImage = new QImage(siWidth, siHeight, siFormat);
+
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+         pdstImage->setColorTable(psrcImage->colorTable());
+         pdstImage->fill(0);
+    }
+    else {
+        pdstImage->fill(QColor(0,0,0,0));
+    }
 
     for(int i = 0; i < siHeight; ++i){
         for(int j = 0; j < siWidth; ++j){
@@ -138,13 +154,27 @@ void widgetGeometryTransform::imageHor(QImage *psrcImage, QImage *pdstImage)
 
         }
     }
+    *ppdstImage = pdstImage;
+
+    return;
 }
 
-void widgetGeometryTransform::imageVer(QImage *psrcImage, QImage *pdstImage)
+void widgetGeometryTransform::imageVer(QImage *psrcImage, QImage **ppdstImage)
 {
     int siWidth  = psrcImage->width();
     int siHeight = psrcImage->height();
     QImage::Format siFormat = psrcImage->format();
+
+    QImage *pdstImage = new QImage(siWidth, siHeight, siFormat);
+
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+         pdstImage->setColorTable(psrcImage->colorTable());
+         pdstImage->fill(0);
+    }
+    else {
+        pdstImage->fill(QColor(0,0,0,0));
+    }
 
     for(int i = 0; i < siHeight; ++i){
         for(int j = 0; j < siWidth; ++j){
@@ -158,4 +188,84 @@ void widgetGeometryTransform::imageVer(QImage *psrcImage, QImage *pdstImage)
             }
         }
     }
+
+    *ppdstImage = pdstImage;
+
+    return;
+}
+
+void widgetGeometryTransform::imageTrans(QImage *psrcImage, QImage **ppdstImage)
+{
+    int siWidth  = psrcImage->width();
+    int siHeight = psrcImage->height();
+    QImage::Format siFormat = psrcImage->format();
+
+    // 此处宽高交换
+    QImage *pdstImage = new QImage(siHeight, siWidth, siFormat);
+
+    // 目的图像的宽高
+    siWidth = pdstImage->width();
+    siHeight = pdstImage->height();
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+         pdstImage->setColorTable(psrcImage->colorTable());
+         pdstImage->fill(0);
+    }
+    else {
+        pdstImage->fill(QColor(0,0,0,0));
+    }
+
+    for(int i = 0; i < siHeight; ++i){
+        for(int j = 0; j < siWidth; ++j){
+            if(siFormat == QImage::Format_Indexed8){
+                int siIndex = psrcImage->pixelIndex(i,j);
+                pdstImage->setPixel(j, i, static_cast<uint>(siIndex));
+            }
+            else {
+                QColor color = psrcImage->pixelColor(i,j);
+                pdstImage->setPixelColor(j, i, color);
+            }
+        }
+    }
+
+    *ppdstImage = pdstImage;
+}
+
+static float dbHor = 2.0;
+static float dbVer = 1.0;
+
+void widgetGeometryTransform::imageZoomIn(QImage *psrcImage, QImage **ppdstImage)
+{
+    int siWidth  = static_cast<int>(psrcImage->width()*dbHor);
+    int siHeight = static_cast<int>(psrcImage->height()*dbVer);
+    QImage::Format siFormat = psrcImage->format();
+
+    QImage *pdstImage = new QImage(siWidth, siHeight, siFormat);
+
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+         pdstImage->setColorTable(psrcImage->colorTable());
+         pdstImage->fill(0);
+    }
+    else {
+        pdstImage->fill(QColor(0,0,0,0));
+    }
+
+    for(int y = 0; y < siHeight; ++y){
+        for(int x = 0; x < siWidth; ++x){
+            int siSrcX = static_cast<int>(x/dbHor);
+            int siSrcY = static_cast<int>(y/dbHor);
+
+            if(siFormat == QImage::Format_Indexed8){
+                int siIndex = psrcImage->pixelIndex(siSrcX,siSrcY);
+                pdstImage->setPixel(x, y, static_cast<uint>(siIndex));
+            }
+            else {
+                QColor color = psrcImage->pixelColor(siSrcX,siSrcY);
+                pdstImage->setPixelColor(x, y, color);
+            }
+        }
+    }
+
+    *ppdstImage = pdstImage;
 }
