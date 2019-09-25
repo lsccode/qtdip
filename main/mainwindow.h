@@ -6,6 +6,7 @@
 #include <QImage>
 #include "widgetShow/widgetshow.h"
 #include "widgetGrayTransform/widgetgraytransform.h"
+#include "widgetGeometry/widgetgeometry.h"
 
 class MainWindow : public QMainWindow
 {
@@ -26,6 +27,7 @@ private:
     QTabWidget *mainTabwidget;
 
     widgetShow *m_pWgtShow;
+    widgetGeometryTransform *m_pWgtGeoTrans;
     widgetGrayTransform *m_pWgtGrayTrans;
     PlayWidget *m_wgtPlay;
 

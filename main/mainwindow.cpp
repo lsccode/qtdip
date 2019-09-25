@@ -16,14 +16,18 @@ MainWindow::MainWindow(QWidget *parent) :
     mainTabwidget = new QTabWidget;
 
     m_pWgtShow      = new widgetShow;
+    m_pWgtGeoTrans  = new widgetGeometryTransform;
     m_pWgtGrayTrans = new widgetGrayTransform;
     m_wgtPlay       = new PlayWidget;
 
     mainTabwidget->setIconSize(QSize(24, 24));
     mainTabwidget->setTabShape(QTabWidget::Triangular);
+
     mainTabwidget->addTab(m_pWgtShow,QIcon(":/images/films.png"),"预览");
+    mainTabwidget->addTab(m_pWgtGeoTrans,QIcon(":/images/films.png"),"几何变换");
     mainTabwidget->addTab(m_pWgtGrayTrans,QIcon(":/images/films.png"),"灰度变换");
     mainTabwidget->addTab(m_wgtPlay,QIcon(":/images/films.png"),"paly");
+
 
     setMinimumSize(900,480);
     setCentralWidget(mainTabwidget);
@@ -32,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(m_pWgtShow, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
     connect(m_pWgtGrayTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+    connect(m_pWgtGeoTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+
 
     createActions();
 }
@@ -98,6 +104,7 @@ bool MainWindow::loadFile(const QString &fileName)
     m_imageRgb  = m_imageFile.convertToFormat(QImage::Format_RGB32);
 
     m_pWgtShow->showImage(m_imageFile);
+    m_pWgtGeoTrans->showImage(m_imageRgb);
     m_pWgtGrayTrans->showImage(m_imageGray);
     m_wgtPlay->showImage(m_imageRgb);
 

@@ -29,13 +29,15 @@ SOURCES += \
         main/mainwindow.cpp \
     picWidget/playwidget.cpp \
     widgetShow/widgetshow.cpp \
-    widgetGrayTransform/widgetgraytransform.cpp
+    widgetGrayTransform/widgetgraytransform.cpp \
+    widgetGeometry/widgetgeometry.cpp
 
 HEADERS += \
         main/mainwindow.h \
     picWidget/playwidget.h \
     widgetShow/widgetshow.h \
-    widgetGrayTransform/widgetgraytransform.h
+    widgetGrayTransform/widgetgraytransform.h \
+    widgetGeometry/widgetgeometry.h
 
 
 # Default rules for deployment.
