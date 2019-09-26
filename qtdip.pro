@@ -36,7 +36,8 @@ SOURCES += \
     widgetGeometry/dialogRotate.cpp \
     widgetGrayTransform/dialogThreshold.cpp \
     widgetGrayTransform/dialogThresholdTwo.cpp \
-    widgetGrayTransform/dialogGrayWindow.cpp
+    widgetGrayTransform/dialogGrayWindow.cpp \
+    widgetGrayTransform/dialogPiecewiseLine.cpp
 
 HEADERS += \
         main/mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     widgetGeometry/dialogRotate.h \
     widgetGrayTransform/dialogThreshold.h \
     widgetGrayTransform/dialogThresholdTwo.h \
-    widgetGrayTransform/dialogGrayWindow.h
+    widgetGrayTransform/dialogGrayWindow.h \
+    widgetGrayTransform/dialogPiecewiseLine.h
 
 
 # Default rules for deployment.

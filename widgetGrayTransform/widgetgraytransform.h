@@ -26,8 +26,17 @@ private:
 
     // 灰度变换，反色处理
     void imageGrayInverColor(QImage *psrcImage, QImage **ppdstImage);
-    //对图像进行窗口变换 x < a -> 0; x > b ->255
+    // 灰度变换，对图像进行窗口变换 x < a -> 0; x > b ->255
     void imageGrayWindow(QImage *psrcImage, QImage **ppdstImage);
+    // 灰度变换，分段线性变换
+    void imagePiecewiseLine(QImage *psrcImage, QImage **ppdstImage);
+    void createPiecewiseMap(int siX1, int siY1, int siX2, int siY2, int asiMap[256]);
+    // 灰度变换，灰度分布均衡化
+    void imageDistributioneEqualization(QImage *psrcImage, QImage **ppdstImage);
+    void creatHist(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
+    void creatHistAccumulative(double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
+    void createDistributionMap(QImage *psrcImage, int asiRedMap[256], int asiGreenMap[256], int asiBlueMap[256]);
+
 
 
 signals:
