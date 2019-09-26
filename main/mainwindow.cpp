@@ -105,7 +105,7 @@ bool MainWindow::loadFile(const QString &fileName)
 
     m_pWgtShow->showImage(m_imageFile);
     m_pWgtGeoTrans->showImage(m_imageRgb);
-    m_pWgtGrayTrans->showImage(m_imageGray);
+    m_pWgtGrayTrans->showImage(m_imageRgb);
     m_wgtPlay->showImage(m_imageRgb);
 
     setWindowFilePath(fileName);
