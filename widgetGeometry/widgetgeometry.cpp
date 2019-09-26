@@ -302,6 +302,10 @@ void widgetGeometryTransform::imageZoomIn(QImage *psrcImage, QImage **ppdstImage
     *ppdstImage = pdstImage;
 }
 
+
+//  图像旋转比较复杂，参考原理实现：
+//  https://blog.csdn.net/sunshine_zoe/article/details/77836798
+//  https://blog.csdn.net/lkj345/article/details/50555870
 #define PI 3.1415926535
 #define RADIAN(angle) ((angle)*PI/180.0)
 #define max(a,b)            (((a) > (b)) ? (a) : (b))
