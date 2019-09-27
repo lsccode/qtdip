@@ -89,10 +89,16 @@ bool MainWindow::loadFile(const QString &fileName)
     reader.setAutoTransform(true);
     m_imageFile = reader.read();
     if (m_imageFile.isNull()) {
-        QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
-                                 tr("Cannot load %1: %2")
-                                 .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
-        return false;
+
+         // 默认图片还不存在则再重新加载一次
+        m_imageFile.load(tr("C:\\Users\\user\\Pictures\\lenarbmp.bmp"));
+
+        if (m_imageFile.isNull()){
+            QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
+                                     tr("Cannot load %1: %2")
+                                     .arg(QDir::toNativeSeparators(fileName), reader.errorString()));
+            return false;
+        }
     }
 
     // 先转换为灰度图，
