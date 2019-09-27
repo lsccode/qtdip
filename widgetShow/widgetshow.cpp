@@ -117,7 +117,7 @@ void widgetShow::clearAction()
 
 void widgetShow::loadDefaultImg()
 {
-    m_imagePath = tr("C:\\Users\\sichenglin\\Pictures\\lenargb.jpg");
+    m_imagePath = tr("C:\\Users\\sichenglin\\Pictures\\lenarbmp.bmp");
     emit openImageFile(m_imagePath);
 }
 

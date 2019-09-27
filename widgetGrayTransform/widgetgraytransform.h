@@ -32,10 +32,16 @@ private:
     void imagePiecewiseLine(QImage *psrcImage, QImage **ppdstImage);
     void createPiecewiseMap(int siX1, int siY1, int siX2, int siY2, int asiMap[256]);
     // 灰度变换，灰度分布均衡化
-    void imageDistributioneEqualization(QImage *psrcImage, QImage **ppdstImage);
+    void imageHistDistributioneEqualization(QImage *psrcImage, QImage **ppdstImage);
     void creatHist(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
-    void creatHistAccumulative(double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
+    void creatHistNormal(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
+    void creatHistAccumulative(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256]);
     void createDistributionMap(QImage *psrcImage, int asiRedMap[256], int asiGreenMap[256], int asiBlueMap[256]);
+    // 灰度变换，直方图匹配也叫直方图规定化
+    void imageHistMatch(QImage *psrcImage, QImage **ppdstImage);
+    void calcHistMatchMap(double adbSrcMap[256], double adbSrcpu[64], int asiSrcMap[], int asiRedMap[], int siDstSize);
+    void createHistMatchMap(QImage *psrcImage, int asiRedMap[256], int asiGreenMap[256], int asiBlueMap[256]);
+
 
 
 

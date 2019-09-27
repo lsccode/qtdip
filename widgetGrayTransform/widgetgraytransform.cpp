@@ -14,7 +14,8 @@ enum {
     E_GRAY_TRANS_INVERT_COLOR,
     E_GRAY_TRANS_WINDOW,
     E_GRAY_PEICEWISE_LINT,
-    E_GRAY_DISTRU_EQ,
+    E_GRAY_HIST_DISTRU_EQ,
+    E_GRAY_HIST_MATCH,
 };
 
 widgetGrayTransform::widgetGrayTransform(QWidget *parent) : widgetShow(parent)
@@ -45,8 +46,11 @@ void widgetGrayTransform::imageProcess(QImage image, int action)
     case E_GRAY_PEICEWISE_LINT:
         imagePiecewiseLine(&image, &pImage);
         break;
-    case E_GRAY_DISTRU_EQ:
-        imageDistributioneEqualization(&image, &pImage);
+    case E_GRAY_HIST_DISTRU_EQ:
+        imageHistDistributioneEqualization(&image, &pImage);
+        break;
+    case E_GRAY_HIST_MATCH:
+        imageHistMatch(&image, &pImage);
         break;
     default:
         break;
@@ -75,7 +79,8 @@ void widgetGrayTransform::createAction()
     createOneAction(tr("反色处理"), E_GRAY_TRANS_INVERT_COLOR);
     createOneAction(tr("窗口变换"), E_GRAY_TRANS_WINDOW);
     createOneAction(tr("分段线性"), E_GRAY_PEICEWISE_LINT);
-    createOneAction(tr("灰度分布均衡化"), E_GRAY_DISTRU_EQ);
+    createOneAction(tr("灰度均衡"), E_GRAY_HIST_DISTRU_EQ);
+    createOneAction(tr("灰度匹配"), E_GRAY_HIST_MATCH);
 
     setContextMenuPolicy(Qt::ActionsContextMenu);
     setFocusPolicy(Qt::StrongFocus);
@@ -469,11 +474,10 @@ void widgetGrayTransform::imagePiecewiseLine(QImage *psrcImage, QImage **ppdstIm
     return;
 }
 
-void widgetGrayTransform::creatHist(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256])
+void widgetGrayTransform::creatHist(QImage *psrcImage, double asiRedMap[], double asiGreenMap[], double asiBlueMap[])
 {
     int siWidth  = psrcImage->width();
     int siHeight = psrcImage->height();
-    double dbTotal = siWidth*siHeight*1.0;
 
     QImage::Format siFormat = psrcImage->format();
 
@@ -498,6 +502,17 @@ void widgetGrayTransform::creatHist(QImage *psrcImage, double asiRedMap[256], do
         }
     }
 
+    return;
+}
+
+void widgetGrayTransform::creatHistNormal(QImage *psrcImage, double asiRedMap[256], double asiGreenMap[256], double asiBlueMap[256])
+{
+    int siWidth  = psrcImage->width();
+    int siHeight = psrcImage->height();
+    double dbTotal = siWidth*siHeight*1.0;
+
+    creatHist(psrcImage, asiRedMap, asiGreenMap, asiBlueMap);
+
     for(int i = 0; i < 256; ++i){
         asiRedMap[i] = asiRedMap[i]/dbTotal;
         asiGreenMap[i] = asiGreenMap[i]/dbTotal;
@@ -507,13 +522,16 @@ void widgetGrayTransform::creatHist(QImage *psrcImage, double asiRedMap[256], do
     return;
 }
 
-void widgetGrayTransform::creatHistAccumulative(double asiRedMap[], double asiGreenMap[], double asiBlueMap[])
+void widgetGrayTransform::creatHistAccumulative(QImage *psrcImage, double adbRedMap[], double adbGreenMap[], double adbBlueMap[])
 {
+    // 创建直方图
+    creatHistNormal(psrcImage, adbRedMap, adbGreenMap, adbBlueMap);
+
     for(int i = 1; i < 256; i++)
     {
-        asiRedMap[i] = asiRedMap[i] + asiRedMap[i-1];
-        asiGreenMap[i] = asiGreenMap[i] + asiGreenMap[i-1];
-        asiBlueMap[i] = asiBlueMap[i] + asiBlueMap[i-1];
+        adbRedMap[i] = adbRedMap[i] + adbRedMap[i-1];
+        adbGreenMap[i] = adbGreenMap[i] + adbGreenMap[i-1];
+        adbBlueMap[i] = adbBlueMap[i] + adbBlueMap[i-1];
     }
 
     return;
@@ -524,11 +542,9 @@ void widgetGrayTransform::createDistributionMap(QImage *psrcImage, int asiRedMap
     double adbRedMap[256] = {0.0};
     double adbGreenMap[256] = {0.0};
     double adbBlueMap[256]  = {0.0};
-    // 创建直方图
-    creatHist(psrcImage, adbRedMap, adbGreenMap, adbBlueMap);
 
     // 创建累积分布直方图
-    creatHistAccumulative(adbRedMap, adbGreenMap, adbBlueMap);
+    creatHistAccumulative(psrcImage, adbRedMap, adbGreenMap, adbBlueMap);
 
     for(int i = 0; i < 256; i++){
         asiRedMap[i]   = static_cast<int>(255.0 * adbRedMap[i]);
@@ -537,7 +553,7 @@ void widgetGrayTransform::createDistributionMap(QImage *psrcImage, int asiRedMap
     }
 }
 
-void widgetGrayTransform::imageDistributioneEqualization(QImage *psrcImage, QImage **ppdstImage)
+void widgetGrayTransform::imageHistDistributioneEqualization(QImage *psrcImage, QImage **ppdstImage)
 {
     int asiRedMap[256] = {0};
     int asiGreenMap[256] = {0};
@@ -588,7 +604,220 @@ void widgetGrayTransform::imageDistributioneEqualization(QImage *psrcImage, QIma
     return;
 }
 
+#define M_HIST_MATCH_SIZE (64)
+void widgetGrayTransform::imageHistMatch(QImage *psrcImage, QImage **ppdstImage)
+{
+    int asiRedMap[256] = {0};
+    int asiGreenMap[256] = {0};
+    int asiBlueMap[256] = {0};
 
+    createHistMatchMap(psrcImage, asiRedMap, asiGreenMap, asiBlueMap);
+
+    int siWidth  = psrcImage->width();
+    int siHeight = psrcImage->height();
+    QImage::Format siFormat = psrcImage->format();
+
+    QImage *pdstImage = new QImage(siWidth, siHeight, siFormat);
+
+    // 256色灰度索引图(8位索引图)，需要手动设置colorTable，然后再填充为全0
+    if(siFormat == QImage::Format_Indexed8){
+        pdstImage->setColorTable(psrcImage->colorTable());
+        pdstImage->fill(0);
+    }
+    else {
+        pdstImage->fill(QColor(0,0,0,0));
+    }
+
+    for(int y = 0; y < siHeight; ++y){
+        for(int x = 0; x < siWidth; ++x){
+
+            if(siFormat == QImage::Format_Indexed8){
+                // 根据映射表转换像素值
+                int siPix = psrcImage->pixelIndex(x,y);
+
+                pdstImage->setPixel(x, y, static_cast<size_t>(asiRedMap[siPix]));
+            }
+            else {
+                QColor color = psrcImage->pixelColor(x,y);
+
+                int siPix = 0 ;
+#if 1
+                // 如下适用红色映射表，用于对比测试
+                siPix = color.red();color.setRed(asiRedMap[siPix]);
+                siPix = color.green();color.setGreen(asiRedMap[siPix]);
+                siPix = color.blue();color.setBlue(asiRedMap[siPix]);
+#else
+                // 如下适用各自的映射表
+                siPix = color.red();color.setRed(asiRedMap[siPix]);
+                siPix = color.green();color.setGreen(asiGreenMap[siPix]);
+                siPix = color.blue();color.setBlue(asiBlueMap[siPix]);
+#endif
+
+                pdstImage->setPixelColor(x, y, color);
+            }
+
+        }
+    }
+    *ppdstImage = pdstImage;
+
+    return;
+
+}
+
+void widgetGrayTransform::calcHistMatchMap(double adbSrcMap[256], double adbDstpu[M_HIST_MATCH_SIZE],
+                                             int asiSrcMap[], int asiDstMap[], int siDstSize)
+{
+    // 确定映射对应关系
+    for (int i = 0; i < 256; i++)
+    {
+        // 最接近的规定直方图灰度级
+        int m_r = 0;
+        // 最小差值
+        double min_value_r = 1.0;
+        // 对规定直方图各灰度进行枚举
+        for (int j = 0; j < siDstSize; j++)
+        {
+            // 当前差值
+            double now_value = 0.0;
+            //  计算差值
+            if (adbSrcMap[i] - adbDstpu[j] >= 0.0)
+                now_value = adbSrcMap[i] - adbDstpu[j];
+            else
+                now_value = adbDstpu[j] - adbSrcMap[i];
+            // 寻找最接近的规定直方图灰度级
+            if (now_value < min_value_r)
+            {
+                // 最接近的灰度级
+                m_r = j;
+                // 暂存最小差值
+                min_value_r = now_value;
+            }
+        }
+        // 建立灰度映射表
+        asiDstMap[i] = asiSrcMap[m_r];
+    }
+}
+
+void widgetGrayTransform::createHistMatchMap(QImage *psrcImage, int asiRedMap[], int asiGreenMap[], int asiBlueMap[])
+{
+    int asinu[M_HIST_MATCH_SIZE];
+    double adbpu[M_HIST_MATCH_SIZE];
+
+    float a=1.0f/(32.0f*63.0f);
+
+    for(int i = 0; i< M_HIST_MATCH_SIZE; i++)
+    {
+        asinu[i]=i*4;
+        adbpu[i]=static_cast<double>(a*i);
+    }
+
+    double adbRedMap[256] = {0.0};
+    double adbGreenMap[256] = {0.0};
+    double adbBlueMap[256]  = {0.0};
+
+    // 创建累积分布直方图
+    creatHistAccumulative(psrcImage, adbRedMap, adbGreenMap, adbBlueMap);
+
+    for (int i = 1; i < M_HIST_MATCH_SIZE; i++)
+    {
+        adbpu[i] = adbpu[i] + adbpu[i-1];
+    }
+
+    // 确定映射对应关系
+    calcHistMatchMap(adbRedMap, adbpu, asinu, asiRedMap, M_HIST_MATCH_SIZE);
+    calcHistMatchMap(adbGreenMap, adbpu, asinu, asiGreenMap, M_HIST_MATCH_SIZE);
+    calcHistMatchMap(adbBlueMap, adbpu, asinu, asiBlueMap, M_HIST_MATCH_SIZE);
+
+#if 0
+    for (int i = 0; i < 256; i++)
+    {
+        // 最接近的规定直方图灰度级
+        int m_r = 0;
+        // 最小差值
+        double min_value_r = 1.0;
+        // 对规定直方图各灰度进行枚举
+        for (int j = 0; j < M_HIST_MATCH_SIZE; j++)
+        {
+            // 当前差值
+            double now_value = 0.0;
+            //  计算差值
+            if (adbRedMap[i] - adbpu[j] >= 0.0)
+                now_value = adbRedMap[i] - adbpu[j];
+            else
+                now_value = adbpu[j] - adbRedMap[i];
+            // 寻找最接近的规定直方图灰度级
+            if (now_value < min_value_r)
+            {
+                // 最接近的灰度级
+                m_r = j;
+                // 暂存最小差值
+                min_value_r = now_value;
+            }
+        }
+        // 建立灰度映射表
+        asiRedMap[i] = asinu[m_r];
+    }
+
+    for (int i = 0; i < 256; i++)
+    {
+        // 最接近的规定直方图灰度级
+        int m_r = 0;
+        // 最小差值
+        double min_value_r = 1.0;
+        // 对规定直方图各灰度进行枚举
+        for (int j = 0; j < M_HIST_MATCH_SIZE; j++)
+        {
+            // 当前差值
+            double now_value = 0.0;
+            //  计算差值
+            if (adbGreenMap[i] - adbpu[j] >= 0.0)
+                now_value = adbGreenMap[i] - adbpu[j];
+            else
+                now_value = adbpu[j] - adbGreenMap[i];
+            // 寻找最接近的规定直方图灰度级
+            if (now_value < min_value_r)
+            {
+                // 最接近的灰度级
+                m_r = j;
+                // 暂存最小差值
+                min_value_r = now_value;
+            }
+        }
+        // 建立灰度映射表
+        asiGreenMap[i] = asinu[m_r];
+    }
+
+    for (int i = 0; i < 256; i++)
+    {
+        // 最接近的规定直方图灰度级
+        int m_r = 0;
+        // 最小差值
+        double min_value_r = 1.0;
+        // 对规定直方图各灰度进行枚举
+        for (int j = 0; j < M_HIST_MATCH_SIZE; j++)
+        {
+            // 当前差值
+            double now_value = 0.0;
+            //  计算差值
+            if (adbBlueMap[i] - adbpu[j] >= 0.0)
+                now_value = adbBlueMap[i] - adbpu[j];
+            else
+                now_value = adbpu[j] - adbBlueMap[i];
+            // 寻找最接近的规定直方图灰度级
+            if (now_value < min_value_r)
+            {
+                // 最接近的灰度级
+                m_r = j;
+                // 暂存最小差值
+                min_value_r = now_value;
+            }
+        }
+        // 建立灰度映射表
+        asiBlueMap[i] = asinu[m_r];
+    }
+#endif
+
+}
 
 
 
