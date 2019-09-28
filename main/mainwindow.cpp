@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pWgtShow      = new widgetShow;
     m_pWgtGeoTrans  = new widgetGeometryTransform;
     m_pWgtGrayTrans = new widgetGrayTransform;
+    m_pWgtSmoothImg = new widgetSmoothImg;
     m_wgtPlay       = new PlayWidget;
 
     mainTabwidget->setIconSize(QSize(24, 24));
@@ -26,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     mainTabwidget->addTab(m_pWgtShow,QIcon(":/images/films.png"),"预览");
     mainTabwidget->addTab(m_pWgtGeoTrans,QIcon(":/images/films.png"),"几何变换");
     mainTabwidget->addTab(m_pWgtGrayTrans,QIcon(":/images/films.png"),"灰度变换");
+    mainTabwidget->addTab(m_pWgtSmoothImg,QIcon(":/images/films.png"),"图像平滑");
+
+
     mainTabwidget->addTab(m_wgtPlay,QIcon(":/images/films.png"),"paly");
 
 
@@ -35,9 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("DIP"));
 
     connect(m_pWgtShow, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
-    connect(m_pWgtGrayTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
     connect(m_pWgtGeoTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
-
+    connect(m_pWgtGrayTrans, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
+    connect(m_pWgtSmoothImg, SIGNAL(openImageFile(QString)), this, SLOT(loadFile(QString)));
 
     createActions();
 }
@@ -112,6 +116,7 @@ bool MainWindow::loadFile(const QString &fileName)
     m_pWgtShow->showImage(m_imageFile);
     m_pWgtGeoTrans->showImage(m_imageRgb);
     m_pWgtGrayTrans->showImage(m_imageRgb);
+    m_pWgtSmoothImg->showImage(m_imageRgb);
     m_wgtPlay->showImage(m_imageRgb);
 
     setWindowFilePath(fileName);
