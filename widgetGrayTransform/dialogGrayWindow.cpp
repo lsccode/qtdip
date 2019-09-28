@@ -5,7 +5,7 @@
 
 WidgetPainterWindow::WidgetPainterWindow(QWidget *parent): QWidget(parent)
 {
-    setFixedSize(320, 320);
+    setFixedSize(340, 340);
     m_thres1 = 50;
     m_thres2 = 200;
 }
@@ -36,42 +36,42 @@ void WidgetPainterWindow::paintEvent(QPaintEvent *event)
     pen.setWidthF(2);
     painter.setPen(pen);
 
-    painter.translate(10,280); // 坐标原点移动到左下角
+    painter.translate(10,320); // 坐标原点移动到左下角
     painter.scale(1, -1);  // Y坐标变换为向上
 //    painter.setWindow(-10, 2, 20, -4); // (-10, 2)    (10, -2)
 
     // 设置背景颜色
-    painter.fillRect(-10, -10, 300, 300, Qt::darkBlue);
+    painter.fillRect(-10, -10, 330, 330, Qt::darkBlue);
     painter.drawLine(QPointF(0, 0), QPointF(m_thres1, 0));   // x
     painter.drawLine(QPointF(m_thres1, 0), QPointF(m_thres1, m_thres1));     //
     painter.drawLine(QPointF(m_thres1, m_thres1), QPointF(m_thres2, m_thres2));     //
     painter.drawLine(QPointF(m_thres2, m_thres2), QPointF(m_thres2, 255));
     painter.drawLine(QPointF(m_thres2, 255), QPointF(255, 255));
 
-    painter.drawLine(QPointF(0, 0), QPointF(0, 260));
-    painter.drawLine(QPointF(0, 0), QPointF(260, 0));
+    painter.drawLine(QPointF(0, 0), QPointF(0, 310));
+    painter.drawLine(QPointF(0, 0), QPointF(310, 0));
 
-    //painter.rotate(90);
-    //painter.scale(-1, -1);
-    for(int i = 0; i< 280; i += 50)//分成10份
+    // 仍然以左上角为坐标原点
+    QTransform transform;
+    transform.translate(10,320);
+    painter.setWorldTransform(transform);
+
+    for(int i = 0; i<= 300; i += 50)//分成10份
     {
         //选取合适的坐标，绘制一段长度为4的直线，用于表示刻度
-        painter.drawLine(QPointF(0, i),QPointF(0, i+10));
-        painter.drawText(QPointF(0, i),QString::asprintf("%d",i));
-        //painter.drawText(0, i ,"10");
+        painter.drawLine(QPointF(i, 0),QPointF(i, -10));
+        painter.drawText(QPointF(i+5, 0),QString::asprintf("%d",i));
     }
-    painter.drawText(QPointF(0, 270),"y");
+    painter.drawText(QPointF(310, -10),"x");
 
-    painter.scale(1, -1);
-    for(int i = 0; i< 280; i += 50)//分成10份
+    // 坐标系从10,370，y轴方向向下，上面painter的坐标轴已经为负，所以应该从负方向开始画
+    for(int i = -50; i >= -300; i -= 50)//分成10份
     {
         //选取合适的坐标，绘制一段长度为4的直线，用于表示刻度
-        painter.drawLine(QPointF(i, 0),QPointF(i+10, 0));
-        painter.drawText(QPointF(i, 0),QString::asprintf("%d",i));
-        //painter.drawText(0, i ,"10");
+        painter.drawLine(QPointF(0, i),QPointF(10, i));
+        painter.drawText(QPointF(0, i-5),QString::asprintf("%d",-i));
     }
-    painter.drawText(QPointF(280, 0),"x");
-
+    painter.drawText(QPointF(-10,-310),"y");
 
     painter.end();
 }
